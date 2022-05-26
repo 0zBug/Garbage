@@ -81,16 +81,16 @@ Garbage.setupvalue = function(Query, Index, Value, Changed)
         for _, upvalue in next, getupvalues(Function) do
             if type(upvalue) == "table" and rawget(upvalue, Index) then
                 if Changed then
-                    upvalue[index] = nil
+                    upvalue[Index] = nil
 
                     setmetatable(upvalue, {
                         __newindex = function(self, i, v)
-                            if not i == index then
+                            if not i == Index then
                                 rawset(self, i, v)
                             end
                         end,
                         __index = function(self, v)
-                            if v == index then
+                            if v == Index then
                                 return Value
                             else
                                 return rawget(self, v)
