@@ -59,19 +59,19 @@ Garbage.find = function(Query)
 end
 
 Garbage.dump = function(Query)
-    local Result = {}
-    local upvalues = {}
+    local Functions = {}
 
     for _, Function in next, getgc() do
-        if not table.find(Result, Function) then
-            table.insert(Result, Function)
+        if not table.find(Functions, Function) then
+            table.insert(Functions, Function)
             if type(Function) == "function" and islclosure(Function) and not is_synapse_function(Function) and not (getfenv(Function).script and (getfenv(Function).script.RobloxLocked or getfenv(Function).script:IsDescendantOf(game.Chat) or getfenv(Function).script.Name == "FreecamScript")) then
-                for i, constant in next, getconstants(Function) do
+                for _, constant in next, getconstants(Function) do
                     if type(constant) == "string" then
                         if string.match(string.lower(constant), string.lower(Query)) then
-                            for i, upvalue in next, getupvalues(Function) do
+                            for _, upvalue in next, getupvalues(Function) do
                                 if type(upvalue) == "table" and rawget(upvalue, constant) then
-                                    warn(string.format("%s = %s", tostring(upvalue), ttostring(upvalue)))
+                                    print(string.format("game.%s", debug.getinfo(Function).short_src))
+                                    warn(string.format("%s = %s", debug.getinfo(Function).name, ttostring(upvalue)))
                                 end
                             end
                         end
@@ -80,8 +80,6 @@ Garbage.dump = function(Query)
             end
         end
     end
-
-    return Result
 end
 
 Garbage.setupvalue = function(Query, Index, Value, Changed)
