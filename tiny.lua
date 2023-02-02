@@ -83,7 +83,7 @@ Garbage.dump = function(Query)
 end
 
 Garbage.setupvalue = function(Query, Index, Value, Changed)
-    local Functions = Cache[Query] or find(Query)
+    local Functions = Cache[Query] or Garbage.find(Query)
 
     for _, Function in next, Functions do
         for _, upvalue in next, getupvalues(Function) do
