@@ -115,4 +115,8 @@ Garbage.setupvalue = function(Query, Index, Value, Changed)
     Cache[Query] = Functions
 end
 
-return Garbage
+return setmetatable(Garbage, {
+    __index = function(self, index)
+        return rawget(self, string.lower(index))
+    end
+})
