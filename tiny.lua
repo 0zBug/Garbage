@@ -34,13 +34,18 @@ function ttostring(table, indent)
     return result .. string.format("\n%s}", string.rep("  ", indent - 1))
 end
 
+local isexploit = is_synapse_function or is_fluxus_function
+local islclosure = islclosure or function(Function)
+	return not debug.getinfo(Function, "s").what == "C"
+end
+
 local Garbage = {}
 
 Garbage.find = function(Query)
     local Result = {}
 
     for _, Function in next, getgc() do
-        if type(Function) == "function" and islclosure(Function) and not is_synapse_function(Function) and not (getfenv(Function).script and (getfenv(Function).script.RobloxLocked or getfenv(Function).script:IsDescendantOf(game.Chat) or getfenv(Function).script.Name == "FreecamScript")) then
+        if type(Function) == "function" and islclosure(Function) and not isexploit(Function) and not (getfenv(Function).script and (getfenv(Function).script.RobloxLocked or getfenv(Function).script:IsDescendantOf(game.Chat) or getfenv(Function).script.Name == "FreecamScript")) then
             for _, f in next, {"getconstants", "getupvalues"} do
                 for i, v in next, getgenv()[f](Function) do
                     if type(v) == "string" then
@@ -64,7 +69,7 @@ Garbage.dump = function(Query)
     for _, Function in next, getgc() do
         if not table.find(Functions, Function) then
             table.insert(Functions, Function)
-            if type(Function) == "function" and islclosure(Function) and not is_synapse_function(Function) and not (getfenv(Function).script and (getfenv(Function).script.RobloxLocked or getfenv(Function).script:IsDescendantOf(game.Chat) or getfenv(Function).script.Name == "FreecamScript")) then
+            if type(Function) == "function" and islclosure(Function) and not isexploit(Function) and not (getfenv(Function).script and (getfenv(Function).script.RobloxLocked or getfenv(Function).script:IsDescendantOf(game.Chat) or getfenv(Function).script.Name == "FreecamScript")) then
                 for _, constant in next, getconstants(Function) do
                     if type(constant) == "string" then
                         if string.match(string.lower(constant), string.lower(Query)) then
